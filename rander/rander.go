@@ -1,6 +1,7 @@
 package rander
 
 import (
+	"fmt"
 	"rpg/game"
 	"rpg/game/maps"
 	"rpg/game/units"
@@ -33,8 +34,14 @@ func (rander *Rander) RanderUnits() {
 	screenX, screenY := rander.Screen.Size()
 	unitList := []units.IsUnit{}
 
-	for _, unit := range rander.World.Units {
+	for uuid, unit := range rander.World.Players {
+		fmt.Println(rander.World.MyID)
+		fmt.Println(unit)
+		if uuid == "" {
+			continue
+		}
 		unitList = append(unitList, unit)
+		// fmt.Println(unit)
 		if unit.GetID() == rander.World.MyID {
 			myUnit = unit
 			continue

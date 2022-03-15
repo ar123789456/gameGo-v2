@@ -12,7 +12,7 @@ type Unit struct {
 	HorizontalDirection DirectionType    `json:"horizontal"`
 }
 
-type Units map[string]IsUnit
+// type Units map[string]IsUnit
 
 type IsUnit interface {
 	GET() *Unit
@@ -25,6 +25,7 @@ type IsUnit interface {
 	GetAction() string
 	UpdateRoad(road *maps.Coordinate)
 	GetRoad() *maps.Coordinate
+	Unmarshal([]byte) (map[string]IsUnit, error)
 }
 
 type DirectionType int

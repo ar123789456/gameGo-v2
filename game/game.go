@@ -2,6 +2,7 @@ package game
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"rpg/game/player"
 	"rpg/game/units"
@@ -9,11 +10,13 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+// all information for world
 type World struct {
-	MyID        string `json:"-"`
-	IsServer    bool   `json:"-"`
-	units.Units `json:"units"`
-	Maps        *ebiten.Image
+	MyID     string `json:"-"`
+	IsServer bool   `json:"-"`
+	// units.Units    `json:"units"`
+	player.Players `json:"players"`
+	Maps           *ebiten.Image
 }
 
 type Event struct {
@@ -35,8 +38,9 @@ type EventIdle struct {
 }
 
 type EventInit struct {
-	PlayerID string      `json:"player_id"`
-	Units    units.Units `json:"units"`
+	PlayerID string `json:"player_id"`
+	// Units    units.Units    `json:"units"`
+	Players player.Players `json:"players"`
 }
 
 const (
@@ -60,14 +64,15 @@ func (world *World) HandleEvent(event *Event) {
 			log.Panic(err)
 		}
 
-		world.Units[ev.Player.ID] = &ev.Player
+		// world.Units[ev.Player.ID] = &ev.Player
+		world.Players[ev.Player.ID] = &ev.Player
 
 	case EventTypeMove:
 		str, _ := json.Marshal(event.Data)
 		var ev EventMove
 		json.Unmarshal(str, &ev)
 
-		unit := world.Units[ev.UnitID]
+		unit := world.Players[ev.UnitID]
 
 		unit.UpdateAction(units.ActionRun)
 
@@ -83,31 +88,40 @@ func (world *World) HandleEvent(event *Event) {
 			unit.UpdateCoordinate(1, 0)
 			// unit.HorizontalDirection = ev.Direction
 		}
-		world.Units[ev.UnitID] = unit
+		world.Players[ev.UnitID] = unit
 
 	case EventTypeIdle:
 		str, _ := json.Marshal(event.Data)
 		var ev EventIdle
 		json.Unmarshal(str, &ev)
 
-		unit := world.Units[ev.UnitID]
+		unit := world.Players[ev.UnitID]
 		unit.UpdateAction(units.ActionIdle)
 
 	case EventTypeInit:
 		str, _ := json.Marshal(event.Data)
 		var ev EventInit
 		json.Unmarshal(str, &ev)
+		fmt.Println(ev)
+		for id, player := range ev.Players {
+			// fmt.Println(player)
+			ev.Players[id] = player
+		}
 
 		if !world.IsServer {
 			world.MyID = ev.PlayerID
-			world.Units = ev.Units
+			// world.Units = ev.Units
+			world.Players = ev.Players
 		}
 
 	}
 }
 
-func (world *World) AddUnit(unit units.IsUnit) *units.IsUnit {
+func (world *World) AddUnit(unit player.Player) *player.Player {
 	unit.Create()
-	world.Units[unit.GetID()] = unit
+	fmt.Println(unit)
+	world.Players[unit.GetID()] = &unit
+	// world.Players[unit.GetID()] = &unit
+	// NowUnit := world.Units[unit.GetID()]
 	return &unit
 }

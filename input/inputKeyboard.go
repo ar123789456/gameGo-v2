@@ -47,7 +47,7 @@ func HandleKeyPress(c *websocket.Conn, world *game.World) {
 	}
 
 	//handle Idle
-	if world.Units[world.MyID].GetAction() == units.ActionRun && world.Units[world.MyID].GetRoad() == nil {
+	if world.Players[world.MyID].GetAction() == units.ActionRun && world.Players[world.MyID].GetRoad() == nil {
 		c.WriteJSON(game.Event{
 			Type: game.EventTypeIdle,
 			Data: game.EventIdle{
@@ -67,7 +67,7 @@ type createEventKey struct {
 func (cr *createEventKey) createEventMove() bool {
 	for _, key := range cr.keys {
 		if ebiten.IsKeyPressed(key) {
-			cr.world.Units[cr.world.MyID].UpdateRoad(nil)
+			cr.world.Players[cr.world.MyID].UpdateRoad(nil)
 			cr.c.WriteJSON(
 				game.Event{
 					Type: game.EventTypeMove,

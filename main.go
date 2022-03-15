@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"rpg/game"
-	"rpg/game/units"
+	"rpg/game/player"
+
+	// "rpg/game/units"
 	"rpg/input"
 	"rpg/rander"
 
@@ -15,13 +18,15 @@ import (
 
 var world game.World
 var frame int
-var img *ebiten.Image
+
+// var img *ebiten.Image
 var c *websocket.Conn
 
 func init() {
 	world = game.World{
 		IsServer: false,
-		Units:    units.Units{},
+		// Units:    units.Units{},
+		Players: player.Players{},
 	}
 }
 
@@ -42,7 +47,10 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	var randerInfo rander.Rander
 	frame++
+	fmt.Println(world.Players)
 	randerInfo = rander.RanderBuild(&world, frame, screen)
+	fmt.Println(world.Players)
+
 	if world.Maps == nil {
 		randerInfo.RanderMaps()
 	}

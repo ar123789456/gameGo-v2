@@ -12,7 +12,7 @@ import (
 //HandleMousePress handler Mouse pressed
 func HandleMousePress(c *websocket.Conn, world *game.World) {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-		world.Units[world.MyID].UpdateRoad(maps.CreateCoordinate(ebiten.CursorPosition()))
+		world.Players[world.MyID].UpdateRoad(maps.CreateCoordinate(ebiten.CursorPosition()))
 		c.WriteJSON(
 			game.Event{
 				Type: game.EventTypeMove,

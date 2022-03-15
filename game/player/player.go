@@ -1,6 +1,7 @@
 package player
 
 import (
+	"encoding/json"
 	"log"
 	"math/rand"
 
@@ -17,6 +18,8 @@ type Player struct {
 	Armor      string `json:"armor"`
 	Boots      string `json:"boots"`
 }
+
+type Players map[string]*Player
 
 func (p *Player) Create() units.IsUnit {
 	skins := []string{
@@ -76,4 +79,14 @@ func (p *Player) GetRoad() *maps.Coordinate {
 
 func (p *Player) UpdateRoad(road *maps.Coordinate) {
 	p.Road = road
+}
+
+func (p *Player) Unmarshal(b []byte) (map[string]units.IsUnit, error) {
+	v := map[string]Player{}
+	err := json.Unmarshal(b, &v)
+	u := map[string]units.IsUnit{}
+	for s, vr := range v {
+		u[s] = &vr
+	}
+	return u, err
 }
