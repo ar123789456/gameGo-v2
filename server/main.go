@@ -1,9 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"rpg/game"
-	"rpg/game/player"
+	"rpg/game/units/player"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,5 +22,4 @@ func main() {
 		})
 	}(hub, world))
 	r.Run(":8080")
-	fmt.Println(r)
 }
